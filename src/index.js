@@ -1,24 +1,38 @@
-const getPos = name => {
-  const cookies = document.cookie
+const cookies = document.cookie
 
-  const prefix = `${name}=`
+const getBegin= prefix => {
   const isFirstKey = cookies.indexOf(prefix)
-  const isMiddleKey = cookies.indexOf(`; ${prefix}`)
-  const beginCookie = isMiddleKey >= 0
-    ? isMiddleKey + 2
-    : (isFirstKey !== 0 ? null : isFirstKey)
+  if (isFirstKey !== 0) {
+    return isFirstKey +prefix.length
+  }
 
-  if (beginCookie === null) {
-    return null
+  const isMiddleKey = cookies.indexOf(`; ${prefix}`)
+  if (isMiddleKey >= 0) {
+    return isMiddleKey +2 +prefix.length
+  }
+
+  return null
+}
+
+const getEnd = prefix => {
+  const endCookie = cookies.indexOf(';', beginCookie)
+  if (endCookie === -1) {
+    return cookies.length
 
   } else {
-    const endCookie = cookies.indexOf(';', beginCookie)
-
-    return {
-      begin: beginCookie + prefix.length,
-      end: endCookie === -1 ? cookies.length : endCookie
-    }
+    return endCookie
   }
+}
+
+const getPos = name => {
+  const prefix = `${name}=`
+  const begin = getBegin(prefix)
+  if (begin === null) {
+    return null
+  }
+
+  const end = getEnd(begin)
+  return { begin, end }
 }
 
 export const getCookieValue = name => {
